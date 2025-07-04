@@ -1,0 +1,75 @@
+{
+  "name": "Coding Agent Infrastructure",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "workspaceFolder": "/workspaces/coding-agent",
+  // Configure container user
+  "remoteUser": "user",
+  // VSCode settings (using committed .vscode/settings.json instead)
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Python development
+        "ms-python.python",
+        "ms-python.black-formatter",
+        // JSON/YAML
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        // Git and containers
+        "mhutchie.git-graph",
+        "ms-vscode-remote.remote-containers",
+        // General development
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-eslint"
+      ]
+    }
+  },
+  // Port forwarding for agent web servers
+  "forwardPorts": [
+    5000,
+    3000,
+    3001,
+    3002,
+    8080
+  ],
+  "portsAttributes": {
+    "5000": {
+      "label": "Main App",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Agent Port Base",
+      "onAutoForward": "silent"
+    }
+  },
+  // Environment variables from host .env file
+  "containerEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "GOOGLE_API_KEY": "${localEnv:GOOGLE_API_KEY}",
+    "OTLP_ENDPOINT": "${localEnv:OTLP_ENDPOINT}",
+    "HONEYCOMB_API_KEY": "${localEnv:HONEYCOMB_API_KEY}",
+    "USER_NAME": "${localEnv:USER_NAME}",
+    "USER_EMAIL": "${localEnv:USER_EMAIL}",
+    "CLAUDE_CONFIG_DIR": "/home/user/.claude"
+  },
+  // Mount points for development
+  "mounts": [
+    // Mount parent workspaces directory to enable agent worktrees
+    "source=${localWorkspaceFolder}/..,target=/workspaces,type=bind,consistency=cached",
+    // Git credentials from host
+    "source=${localEnv:HOME}/.gitconfig,target=/home/user/.gitconfig,type=bind,consistency=cached",
+    // SSH keys for git operations
+    "source=${localEnv:HOME}/.ssh,target=/home/user/.ssh,type=bind,consistency=cached",
+    // Persistent auth and configs (Docker named volumes)
+    "source=claude_auth,target=/home/user/.claude,type=volume",
+    "source=gemini_auth,target=/home/user/.gemini,type=volume",
+    "source=gh_auth,target=/home/user/.config/gh,type=volume",
+    "source=bash_history_data,target=/home/user/.bash_history_dir,type=volume"
+  ],
+  // Post-create setup
+  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
+  // Very time consuming, so we use none
+  "features": {}
+}
