@@ -106,11 +106,6 @@ cat > .mcp.json << 'EOF'
       "command": "python3",
       "args": ["scripts/mcp-servers/mcp_mail.py"],
       "cwd": "/workspaces"
-    },
-    "processes": {
-      "command": "python3", 
-      "args": ["scripts/mcp-servers/mcp_processes.py"],
-      "cwd": "/workspaces"
     }
   }
 }

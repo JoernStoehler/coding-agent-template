@@ -15,9 +15,20 @@ This project provides a reusable template for managing multiple AI coding agents
 - **Resource Allocation**: Automatic port and resource allocation per agent
 - **VSCode Integration**: Easy development environment setup
 
+## Documentation
+
+See the [docs/](docs/) directory for comprehensive documentation:
+
+- **[Setup](docs/setup.md)** - Installation and configuration
+- **[Agents](docs/agents.md)** - Creating and managing agents
+- **[Tools](docs/tools.md)** - Available commands and MCP servers
+- **[Architecture](docs/architecture.md)** - System design and decisions
+- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
+- **[Examples](docs/examples/)** - Complete walkthroughs
+
 ## Quick Start
 
-**Get running in 5 minutes:** See [Quick Start Guide](docs/QUICK_START.md)
+**Get running in 5 minutes:**
 
 ### Prerequisites
 - Docker & Docker Compose
@@ -77,12 +88,6 @@ Located in `scripts/mcp-servers/` and automatically started by claude via `.mcp.
 - `mcp__mail_inbox` - Check incoming messages
 - `mcp__mail_read` - Read and mark messages as read
 
-### Process Manager (`mcp_processes.py`)
-- `mcp__process_start` - Start background processes
-- `mcp__process_list` - List running processes
-- `mcp__process_logs` - View process logs
-- `mcp__process_stop` - Stop processes
-
 ## Utility Scripts
 
 - `scripts/list-agents.sh` - Show running agents and their status
@@ -125,19 +130,6 @@ Each agent gets its own `.env` file with:
 - **Worktrees**: One per agent, auto-created by setup script
 - **Merging**: Handled by central planner agent
 
-## Documentation
-
-**Essential Reading:**
-- [Quick Start Guide](docs/QUICK_START.md) - Get running in 5 minutes  
-- [Devcontainer Setup](docs/DEVCONTAINER_SETUP.md) - VSCode development environment
-- [LocalEnv Explained](docs/LOCALENV_EXPLAINED.md) - Environment variables and setup
-- [Technical Decisions](docs/TECHNICAL_DECISIONS.md) - Critical implementation knowledge
-- [Agent Onboarding](docs/agent-onboarding.md) - How agents should work
-
-**Architecture:**
-- [Architecture Details](docs/ARCHITECTURE_REFINED.md) - Complete system design
-- [Interface Specifications](docs/INTERFACES.md) - API and protocol specs
-- [Requirements Analysis](REQUIREMENTS.md) - Original requirements
 
 ## Troubleshooting
 
@@ -156,10 +148,6 @@ Each agent gets its own `.env` file with:
 
 # Check mail system
 ls -la /workspaces/.mail/
-
-# Check processes
-python3 mcp_processes.py &
-# Then use MCP tools to inspect processes
 ```
 
 ## Contributing

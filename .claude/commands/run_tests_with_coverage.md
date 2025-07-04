@@ -35,7 +35,6 @@ tests/unit/test_config.py::test_invalid_port PASSED              [  4%]
 Name                      Stmts   Miss  Cover   Missing
 -------------------------------------------------------
 src/__init__.py               0      0   100%
-src/config.py                45      2    96%   89-90
 src/models/user_model.py     28      0   100%
 -------------------------------------------------------
 TOTAL                       234     12    95%

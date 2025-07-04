@@ -13,14 +13,18 @@ This is a template repository for AI-powered coding agent projects. It provides:
 ## Quick Navigation
 
 ### Essential Documentation
-- @docs/conventions/README.md - Coding standards and naming conventions
-- @docs/workflows/README.md - Common development workflows
-- @docs/ARCHITECTURE_PLANNING.md - System architecture overview
-- @docs/QUICK_START.md - Getting started guide
+- **Setup Guide**: @docs/setup.md - Installation and configuration
+- **Agent Management**: @docs/agents.md - Creating and managing agents
+- **Architecture**: @docs/architecture.md - System design and decisions
+- **Available Tools**: @docs/tools.md - Commands and MCP servers
+- **Troubleshooting**: @docs/troubleshooting.md - Common issues and solutions
 
-### Available Commands
-- `.claude/commands/` - Reusable command patterns (see directory for specific commands)
-- `scripts/` - Development and automation scripts
+### Quick Links
+- **Code Conventions**: @docs/conventions.md - Style and standards
+- **Customization**: @docs/customization.md - Adapting for your project
+- **Single Agent Example**: @docs/examples/single-agent-task.md
+- **Multi-Agent Example**: @docs/examples/multi-agent-workflow.md
+- **Debugging Guide**: @docs/examples/debugging-session.md
 
 ## Development Guidelines
 
@@ -140,5 +144,6 @@ Access telemetry data through your Honeycomb dashboard after configuring `HONEYC
 - 2025-01-04: Initial template creation with telemetry setup
 - 2025-01-04: Added environment-based configuration system
 - 2025-01-04: Created CLAUDE.md as central navigation hub
+- 2025-01-04: Major documentation reorganization into purpose-driven structure
 
 Remember: This file should be kept up-to-date as the project evolves. When making significant changes, update relevant sections here.

@@ -103,7 +103,7 @@ ignore = [
 "scripts/*" = ["T20"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["src"]
+known-first-party = ["example"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
@@ -158,7 +158,7 @@ addopts = [
     "-ra",
     "--strict-markers",
     "--strict-config",
-    "--cov=src",
+    "--cov=src/example",
     "--cov-branch",
     "--cov-report=term-missing:skip-covered",
     "--cov-report=html",
@@ -178,7 +178,7 @@ filterwarnings = [
 
 # Coverage configuration
 [tool.coverage.run]
-source = ["src"]
+source = ["src/example"]
 branch = true
 parallel = true
 omit = [
@@ -213,7 +213,10 @@ exclude_dirs = ["tests", "scripts"]
 
 # Setuptools configuration
 [tool.setuptools]
-packages = ["src"]
+packages = ["example"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.package-data]
 "*" = ["*.md", "*.json", "*.yaml", "*.yml"]

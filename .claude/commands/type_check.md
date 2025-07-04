@@ -14,8 +14,6 @@ pyright src/
 mypy src/
 
 # Check specific file
-pyright src/config.py
-mypy src/config.py
 
 # With stricter settings
 pyright src/ --strict

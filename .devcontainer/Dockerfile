@@ -1,3 +1,7 @@
+# Base development environment for coding agents
+# Provides: Python 3.11, Node.js 20, common dev tools
+# Fork this and modify for your specific needs
+
 FROM python:3.11-slim
 
 # Prevent interactive prompts during package installation
@@ -16,6 +20,15 @@ RUN apt-get update && apt-get install -y \
     # Additional utilities
     jq \
     vim \
+    # Terminal multiplexers for background processes
+    screen \
+    tmux \
+    # Missing useful tools
+    procps \
+    htop \
+    tree \
+    bc \
+    ripgrep \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js 20 LTS (official method)
@@ -87,7 +100,17 @@ RUN echo 'export PATH="/home/user/.local/bin:$PATH"' >> /home/user/.bashrc \
     && echo 'alias ll="ls -la"' >> /home/user/.bashrc \
     && echo 'alias la="ls -la"' >> /home/user/.bashrc \
     && echo 'alias gs="git status"' >> /home/user/.bashrc \
-    && echo 'alias gl="git log --oneline -10"' >> /home/user/.bashrc
+    && echo 'alias gl="git log --oneline -10"' >> /home/user/.bashrc \
+    && echo '# Function to load .env files' >> /home/user/.bashrc \
+    && echo 'load_env() { ' >> /home/user/.bashrc \
+    && echo '    local env_file="${1:-.env}"' >> /home/user/.bashrc \
+    && echo '    if [ -f "$env_file" ]; then' >> /home/user/.bashrc \
+    && echo '        echo "Loading environment from: $env_file"' >> /home/user/.bashrc \
+    && echo '        set -a; source "$env_file"; set +a' >> /home/user/.bashrc \
+    && echo '    else' >> /home/user/.bashrc \
+    && echo '        echo "Environment file not found: $env_file"' >> /home/user/.bashrc \
+    && echo '    fi' >> /home/user/.bashrc \
+    && echo '}' >> /home/user/.bashrc
 
 # Set up bash history persistence (volume mount will override this directory)
 RUN mkdir -p /home/user/.bash_history_dir \
