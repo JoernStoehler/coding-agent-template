@@ -10,19 +10,20 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        // Python development
         "ms-python.python",
         "ms-python.black-formatter",
-        // JSON/YAML
         "ms-vscode.vscode-json",
         "redhat.vscode-yaml",
-        // Git and containers
         "mhutchie.git-graph",
         "ms-vscode-remote.remote-containers",
-        // General development
         "ms-vscode.vscode-typescript-next",
         "bradlc.vscode-tailwindcss",
-        "ms-vscode.vscode-eslint"
+        "ms-vscode.vscode-eslint",
+        "github.vscode-github-actions",
+        "tamasfe.even-better-toml",
+        "dbaeumer.vscode-eslint",
+        "mechatroner.rainbow-csv",
+        "charliermarsh.ruff"
       ]
     }
   },
