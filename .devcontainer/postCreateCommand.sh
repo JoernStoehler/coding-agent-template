@@ -4,34 +4,56 @@
 
 set -e
 
+# Helper function to create directory with proper ownership
+ensure_directory() {
+    local dir="$1"
+    mkdir -p "$dir"
+    
+    # Fix ownership if we have permission
+    if [ "$EUID" -eq 0 ]; then
+        chown -R $USER:$USER "$dir" || true
+    elif command -v sudo &> /dev/null; then
+        sudo chown -R $USER:$USER "$dir" || true
+    fi
+}
+
 # Silent setup tasks
 {
-    # Fix permissions on mounted volumes
-    if [ "$EUID" -eq 0 ] || command -v sudo &> /dev/null; then
-        if [ "$EUID" -eq 0 ]; then
-            chown -R $USER:$USER /home/user/.claude || true
-            chown -R $USER:$USER /home/user/.gemini || true
-            chown -R $USER:$USER /home/user/.config/gh || true
-            chown -R $USER:$USER /home/user/.bash_history_dir || true
-        else
-            sudo chown -R $USER:$USER /home/user/.claude || true
-            sudo chown -R $USER:$USER /home/user/.gemini || true
-            sudo chown -R $USER:$USER /home/user/.config/gh || true
-            sudo chown -R $USER:$USER /home/user/.bash_history_dir || true
-        fi
-    fi
+    # Create required directories with proper ownership
+    ensure_directory /home/user/.local
+    ensure_directory /home/user/.local/share
+    ensure_directory /home/user/.local/share/direnv
+    ensure_directory /home/user/.local/share/direnv/allow
+    ensure_directory /home/user/.claude
+    ensure_directory /home/user/.gemini
+    ensure_directory /home/user/.config
+    ensure_directory /home/user/.config/gh
+    ensure_directory /home/user/.bash_history_dir
+    ensure_directory /workspaces/.mail
+    ensure_directory /workspaces/.processes/logs
+    
 
-    # Create required directories
-    mkdir -p /home/user/.claude
-    mkdir -p /home/user/.gemini
-    mkdir -p /home/user/.config/gh
-    mkdir -p /home/user/.bash_history_dir
-    mkdir -p /workspaces/.mail
-    mkdir -p /workspaces/.processes/logs
-
-    # Set up Claude config directory
-    export CLAUDE_CONFIG_DIR="/home/user/.claude"
+    # Essential environment setup
     echo 'export CLAUDE_CONFIG_DIR="/home/user/.claude"' >> /home/user/.bashrc
+    echo 'export PATH="/home/user/.local/bin:$PATH"' >> /home/user/.bashrc
+    
+    # Persistent bash history
+    echo 'export HISTFILE=/home/user/.bash_history_dir/.bash_history' >> /home/user/.bashrc
+    
+    # Initialize tools (both are installed via Dockerfile)
+    echo 'eval "$(direnv hook bash)"' >> /home/user/.bashrc
+    echo 'eval "$(starship init bash)"' >> /home/user/.bashrc
+    
+    # Common aliases
+    cat > /home/user/.bash_aliases << 'EOF'
+# Common aliases for coding agent development
+alias ll="ls -la"
+alias la="ls -la"
+alias gs="git status"
+alias gl="git log --oneline -10"
+alias gd="git diff"
+alias check="check-services"
+EOF
 
     # Update git config with environment variables if available
     if [ -n "$USER_NAME" ] && [ -n "$USER_EMAIL" ]; then

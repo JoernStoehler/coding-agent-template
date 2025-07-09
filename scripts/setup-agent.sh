@@ -24,7 +24,9 @@ fi
 # Set up paths
 WORKSPACES_DIR="/workspaces"
 WORKTREE_PATH="$WORKSPACES_DIR/$WORKTREE_NAME"
-MAIN_REPO_PATH="$WORKSPACES_DIR/main"
+# Find the main repository (this script is in main/scripts/)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+MAIN_REPO_PATH="$(dirname "$SCRIPT_DIR")"
 
 # Check if main repository exists
 if [[ ! -d "$MAIN_REPO_PATH" ]]; then
@@ -96,6 +98,31 @@ MAIN_URL=http://localhost:$MAIN_PORT
 API_URL=http://localhost:$API_PORT
 DEBUG_URL=http://localhost:$DEBUG_PORT
 EOF
+
+# Create .envrc for direnv
+echo "Creating .envrc for direnv integration"
+if [ -f "$MAIN_REPO_PATH/.envrc" ]; then
+    cp "$MAIN_REPO_PATH/.envrc" .envrc
+else
+    # Fallback if main .envrc doesn't exist
+    cat > .envrc << 'EOF'
+# Load environment variables
+if [ -f .env ]; then
+    set -a; source .env; set +a
+fi
+
+# Set Starship config
+export STARSHIP_CONFIG="$PWD/.config/starship.toml"
+
+# Add scripts to PATH
+PATH_add scripts
+EOF
+fi
+
+# Allow direnv for this directory
+if command -v direnv >/dev/null 2>&1; then
+    direnv allow .
+fi
 
 # Copy .mcp.json configuration for agent
 echo "Copying .mcp.json configuration"

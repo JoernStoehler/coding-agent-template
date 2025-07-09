@@ -1,0 +1,43 @@
+# starship.toml - Starship prompt configuration for coding agent devcontainer
+#
+# DESCRIPTION:
+#   Configures a minimal two-line prompt with git integration. Shows only essential
+#   info (path, git status) without the clutter of package versions, Python versions, etc.
+#
+# ARCHITECTURE DECISIONS:
+#   1. TWO-LINE PROMPT: Keeps command entry clean and prevents horizontal scrolling
+#   2. MINIMAL INFO: Only shows essential info (path, git)
+#   3. NO BLOAT: Disables all language version displays, package info, etc.
+#   4. PERFORMANCE: Minimal modules for fast prompt rendering
+#   5. AI-FRIENDLY PATHS: Shows 4 directory levels (not just 1) so agents maintain context
+#   6. FULL REPO PATHS: truncate_to_repo=false so agents see full paths inside repos
+#   7. SERVICE MONITORING: Shows warning when OAuth, telemetry, or other services are down
+#
+# CUSTOMIZATION:
+#   - To try different prompt styles, edit the format string below
+#   - For more examples and options, see:
+#     https://starship.rs/config/
+#     https://starship.rs/presets/
+#
+# RELATED FILES:
+#   - ~/.bashrc: Sources starship via `eval "$(starship init bash)"`
+
+# Minimal format - only show directory, git info, command duration, service status, and prompt on new line
+format = "$directory$git_branch$git_status$cmd_duration${custom.services}$line_break$character "
+
+[directory]
+truncation_length = 4  # Show more directories for better context
+truncate_to_repo = false  # Show full path even inside repos
+
+# Service health indicator - shows "⚠️ run check-services" when services are unhealthy
+# Note: Looks for check-services.sh in current repo's scripts/ directory
+[custom.services]
+command = "echo ' ⚠️ run check-services'"
+when = '''
+root=$(git rev-parse --show-toplevel 2>/dev/null) && \
+[ -f "$root/scripts/check-services.sh" ] && \
+! "$root/scripts/check-services.sh" --quick >/dev/null 2>&1
+'''
+format = "[$output]($style)"
+style = "yellow bold"
+shell = ["bash", "--noprofile", "--norc"]

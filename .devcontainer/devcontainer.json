@@ -67,7 +67,9 @@
     "source=claude_auth,target=/home/user/.claude,type=volume",
     "source=gemini_auth,target=/home/user/.gemini,type=volume",
     "source=gh_auth,target=/home/user/.config/gh,type=volume",
-    "source=bash_history_data,target=/home/user/.bash_history_dir,type=volume"
+    "source=bash_history_data,target=/home/user/.bash_history_dir,type=volume",
+    // Persistent direnv allows
+    "source=direnv_data,target=/home/user/.local/share/direnv,type=volume"
   ],
   // Post-create setup
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",

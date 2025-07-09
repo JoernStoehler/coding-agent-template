@@ -51,7 +51,7 @@ GOOGLE_API_KEY=AIzaSyxxx         # For Gemini agents
 ```bash
 # Telemetry (for cost tracking)
 HONEYCOMB_API_KEY=your-key
-OTLP_ENDPOINT=https://api.honeycomb.io
+HONEYCOMB_API_ENDPOINT=api.eu1.honeycomb.io  # For EU region (default: api.eu1.honeycomb.io)
 
 # Resource limits
 MAX_CONCURRENT_AGENTS=10

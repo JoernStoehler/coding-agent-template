@@ -34,7 +34,7 @@ fi
 
 # Set defaults
 HONEYCOMB_DATASET="${HONEYCOMB_DATASET:-coding-agent}"
-HONEYCOMB_API_ENDPOINT="${HONEYCOMB_API_ENDPOINT:-api.honeycomb.io}"
+HONEYCOMB_API_ENDPOINT="${HONEYCOMB_API_ENDPOINT:-api.eu1.honeycomb.io}"
 
 # Validate API key with endpoint
 echo "🔐 Validating Honeycomb API key..."
@@ -76,7 +76,7 @@ processors:
         value: coding-agent
         action: upsert
       - key: deployment.environment
-        value: \${ENVIRONMENT:-development}
+        value: ${ENVIRONMENT:-development}
         action: upsert
 
 exporters:
