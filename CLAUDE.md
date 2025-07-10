@@ -64,9 +64,16 @@ This is a template repository for AI-powered coding agent projects. It provides:
    # Edit .env with your values
    ```
 
-2. Run telemetry collector (for cost tracking):
+2. Telemetry collector is managed by supervisor (starts automatically if configured):
    ```bash
-   ./scripts/run-telemetry.sh
+   # Check status
+   sudo supervisorctl status telemetry
+   
+   # View logs
+   sudo supervisorctl tail telemetry
+   
+   # Restart if needed
+   sudo supervisorctl restart telemetry
    ```
 
 3. Install dependencies:
@@ -145,5 +152,6 @@ Access telemetry data through your Honeycomb dashboard after configuring `HONEYC
 - 2025-01-04: Added environment-based configuration system
 - 2025-01-04: Created CLAUDE.md as central navigation hub
 - 2025-01-04: Major documentation reorganization into purpose-driven structure
+- 2025-07-10: Migrated from nohup to supervisor for background service management
 
 Remember: This file should be kept up-to-date as the project evolves. When making significant changes, update relevant sections here.

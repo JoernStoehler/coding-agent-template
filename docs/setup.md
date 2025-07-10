@@ -37,14 +37,12 @@ docker-compose exec coding-agent bash
 
 Create `.env` file with:
 ```bash
-# User identity (for git commits)
-USER_NAME=your-name
-USER_EMAIL=your-email@example.com
-
 # API keys (at least one required)
 ANTHROPIC_API_KEY=sk-ant-xxx    # For Claude agents
 GOOGLE_API_KEY=AIzaSyxxx         # For Gemini agents
 ```
+
+Note: Git user configuration is automatically handled by VSCode/devcontainer.
 
 ### Optional Configuration
 
@@ -127,6 +125,9 @@ ls scripts/mcp-servers/
 
 # Test mail system
 python3 -c "from scripts.mcp_servers.mcp_mail import mail_send; print('Mail system ready')"
+
+# Check supervisor status
+sudo supervisorctl status
 ```
 
 ## Next Steps

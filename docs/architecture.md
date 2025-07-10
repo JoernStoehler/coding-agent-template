@@ -172,13 +172,17 @@ agent-3:  3020-3029
 
 ### Process Management
 
-**Current approach**: Basic Unix process management.
-- Background with `&`
-- Track with PID files
-- Processes reparent to init
-- Survive terminal closure
+**Current approach**: Supervisor for service management.
+- Standard Linux process manager
+- Automatic restart on crashes
+- Centralized logging
+- Simple status/control commands
 
-**Future option**: Could add proper process manager if needed.
+Benefits:
+- AI agents already know supervisor
+- Reduces custom bash complexity
+- Standard debugging patterns
+- Built-in log rotation
 
 ## Scaling Considerations
 

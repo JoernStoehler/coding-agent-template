@@ -210,20 +210,26 @@ BASE_BRANCH=main
 
 ## Process Management
 
-### Background Processes
+### Background Services (Supervisor)
 ```bash
-# Start background process
-./long-task.sh > output.log 2>&1 &
-echo $! > process.pid
+# Check service status
+sudo supervisorctl status
 
-# Check if running
-kill -0 $(cat process.pid) 2>/dev/null && echo "Running"
+# Start/stop/restart services
+sudo supervisorctl start telemetry
+sudo supervisorctl stop telemetry
+sudo supervisorctl restart telemetry
 
-# Stop process
-kill $(cat process.pid)
+# View service logs
+sudo supervisorctl tail telemetry
+sudo supervisorctl tail -f telemetry  # Follow logs
+
+# Reload configuration
+sudo supervisorctl reread
+sudo supervisorctl update
 ```
 
-Processes survive terminal restarts (reparent to PID 1).
+Services are managed by supervisor for reliability and easy debugging.
 
 ## Debugging Tools
 

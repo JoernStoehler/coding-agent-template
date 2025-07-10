@@ -98,10 +98,6 @@ Located in `scripts/mcp-servers/` and automatically started by claude via `.mcp.
 
 ### Environment Variables
 ```bash
-# Required for Docker Compose
-USER_NAME=your-name
-USER_EMAIL=your-email@example.com
-
 # Optional OTLP/Honeycomb configuration
 OTLP_ENDPOINT=https://api.honeycomb.io
 HONEYCOMB_API_KEY=your-api-key
