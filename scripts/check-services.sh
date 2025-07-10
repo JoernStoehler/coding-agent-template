@@ -194,7 +194,7 @@ check_env() {
 echo "=== Service Status ==="
 
 # Critical services
-check_service "OTEL collector" "pgrep -f otelcol-contrib" "./scripts/run-telemetry.sh"
+check_service "OTEL collector" "pgrep -f otelcol-contrib" "sudo supervisorctl start telemetry"
 
 # Authentication
 check_auth "Claude" "[ -f ~/.claude/.credentials.json ] || [ -n \"\$ANTHROPIC_API_KEY\" ]" "claude auth login or export ANTHROPIC_API_KEY=..."
