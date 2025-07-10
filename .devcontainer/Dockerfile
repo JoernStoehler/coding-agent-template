@@ -13,34 +13,24 @@
 # - Loose reproducibility: Exact build reproducibility isn't critical during fast
 #   development phase. We'll revisit this when we slow down or go to production.
 
-FROM python:3.11-slim
+FROM mcr.microsoft.com/devcontainers/python:3.11
 
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
-# We install everything in one layer to reduce image size and improve caching
+# Install additional tools not in base image
+# Base image already includes: python, pip, git, curl, wget, sudo, build-essential, etc.
 RUN apt-get update && apt-get install -y \
-    # Basic system tools
-    curl \
-    wget \
-    git \
-    gnupg \
-    ca-certificates \
-    # Build essentials for some Python packages
-    build-essential \
-    # Additional utilities
-    jq \
-    vim \
     # Terminal multiplexers for background processes
     screen \
     tmux \
-    # Missing useful tools
-    procps \
+    # Additional useful tools
     htop \
     tree \
     bc \
     ripgrep \
+    # Process manager for background services
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv (modern Python package manager)
@@ -65,7 +55,8 @@ RUN /root/.local/bin/uv pip install --system \
     python-dotenv \
     pydantic \
     click \
-    rich
+    rich \
+    j2cli
 
 # Install GitHub CLI
 # Using official GitHub repository and GPG key verification
@@ -103,37 +94,37 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
 # We use it to set STARSHIP_CONFIG per worktree for custom prompts
 RUN apt-get update && apt-get install -y direnv && rm -rf /var/lib/apt/lists/*
 
+# Copy supervisor configuration files
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+COPY telemetry.conf /etc/supervisor/conf.d/telemetry.conf
+COPY otel-config.yaml.j2 /etc/otel/config.yaml.j2
 
-# Create non-root user
-RUN groupadd -r user && useradd -r -g user -m -s /bin/bash user
 
-# Set up directories and permissions
-# Create necessary directories for the development environment
+# System directories need root to create, then transfer ownership to vscode
+# Note: supervisor logs remain root-owned (use sudo to read them)
 RUN mkdir -p /workspaces \
-    && mkdir -p /home/user/.claude \
-    && mkdir -p /home/user/.gemini \
-    && mkdir -p /home/user/.config/gh \
-    && mkdir -p /home/user/.local/share/direnv/allow \
-    && chown -R user:user /workspaces /home/user
+    && mkdir -p /etc/supervisor/conf.d \
+    && mkdir -p /var/log/supervisor \
+    && mkdir -p /etc/otel \
+    && chown -R vscode:vscode /workspaces
 
-# Switch to non-root user for security
-USER user
+USER vscode
 WORKDIR /workspaces
 
-# Git configuration is handled by VS Code - no need to set placeholder values
+# User directories created as vscode user to avoid ownership issues
+# CLI tool directories (.claude, .gemini, .config/gh) preserve OAuth tokens across rebuilds
+# direnv/allow directory prevents direnv permission issues (legacy fix - may not be needed)
+# bash_history file must exist before setting HISTFILE
+RUN mkdir -p /home/vscode/.claude \
+    && mkdir -p /home/vscode/.gemini \
+    && mkdir -p /home/vscode/.config/gh \
+    && mkdir -p /home/vscode/.local/share/direnv/allow \
+    && mkdir -p /home/vscode/.bash_history_dir \
+    && touch /home/vscode/.bash_history_dir/.bash_history
 
-# Set up shell environment with useful aliases and functions
-# NOTE: Shell customizations (aliases, functions, environment vars) have been moved
-# to postCreateCommand.sh to avoid Dev Containers heredoc parsing issues.
-# This ensures reliable builds while maintaining the same functionality.
-
-# Set up bash history persistence directory
-RUN mkdir -p /home/user/.bash_history_dir \
-    && touch /home/user/.bash_history_dir/.bash_history
-
-# Configure npm for user-level global packages and install Claude CLI
-RUN npm config set prefix '/home/user/.local' \
-    && npm install -g @anthropic-ai/claude-code
+# Configure npm for user-level global packages and install AI CLIs
+RUN npm config set prefix '/home/vscode/.local' \
+    && npm install -g @anthropic-ai/claude-code @google/gemini-cli
 
 # Default command
 CMD ["/bin/bash"]

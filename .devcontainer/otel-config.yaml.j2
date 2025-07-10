@@ -1,0 +1,64 @@
+# OpenTelemetry Collector Configuration for Coding Agents
+# This template is processed by envsubst during container startup
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317  # Why: Standard OTEL gRPC port
+      http:
+        endpoint: 0.0.0.0:4318  # Why: Standard OTEL HTTP port
+
+processors:
+  batch:
+    # Why these sizes: Standard OTEL defaults that balance latency vs efficiency
+    timeout: 1s
+    send_batch_size: 1024      # Send when batch reaches this size
+    send_batch_max_size: 2048   # Maximum batch size before splitting
+  
+  resource:
+    attributes:
+      - key: service.namespace
+        value: coding-agent
+        action: upsert
+      - key: deployment.environment
+        value: {{ ENVIRONMENT | default('development') }}
+        action: upsert
+
+exporters:
+  debug:
+    verbosity: basic
+    sampling_initial: 10
+    sampling_thereafter: 100
+  
+  otlp:
+    # Why EU endpoint default: Primary author is EU-based, US users should set HONEYCOMB_API_ENDPOINT=api.honeycomb.io
+    endpoint: "{{ HONEYCOMB_API_ENDPOINT | default('api.eu1.honeycomb.io') }}:443"
+    headers:
+      "x-honeycomb-team": "{{ HONEYCOMB_API_KEY }}"
+      "x-honeycomb-dataset": "{{ HONEYCOMB_DATASET | default('coding-agent') }}"
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133  # Why: Standard OTEL health check port
+    path: /health
+
+service:
+  extensions: [health_check]
+  telemetry:
+    logs:
+      level: info
+    metrics:
+      level: none  # Why: Reduces noise - we care about traces/logs, not collector's own metrics
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [debug, otlp]
+    metrics:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp]
+    logs:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [debug, otlp]
