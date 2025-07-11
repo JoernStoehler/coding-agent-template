@@ -45,10 +45,27 @@ fi
 
 echo ""
 
+# Ensure supervisor is running (it might not be if container was restarted)
+# Why: postCreateCommand starts supervisor on first creation, but on container
+# restart only postStartCommand runs, so we need to ensure supervisor is up
+if ! pgrep -x supervisord > /dev/null; then
+    echo "Starting supervisor..."
+    sudo /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+    sleep 2  # Give supervisor time to start
+fi
+
 # Show telemetry status (supervisor handles the actual service)
 # Why: We check supervisor instead of the process directly because supervisor
 # manages restarts and provides better status info (RUNNING, STOPPED, etc.)
 if [ -n "$HONEYCOMB_API_KEY" ]; then
+    # Start telemetry if it's not running
+    if ! sudo supervisorctl status telemetry 2>/dev/null | grep -q "RUNNING"; then
+        echo "Starting telemetry collector..."
+        sudo supervisorctl start telemetry
+        sleep 2  # Give telemetry time to start
+    fi
+    
+    # Check final status
     if sudo supervisorctl status telemetry 2>/dev/null | grep -q "RUNNING"; then
         echo "✓ Telemetry collector running"
     else
